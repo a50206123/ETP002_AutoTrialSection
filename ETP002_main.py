@@ -1,4 +1,4 @@
-from yc_etabs_api.yc_etabs_api as ETABS
+from yc_etabs_api.yc_etabs_api import ETABS
 import ETP001_main as ETP001
 
 class AutoTrialSection :
