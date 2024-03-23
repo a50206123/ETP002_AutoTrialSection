@@ -1,26 +1,35 @@
 import time
 
-def output_str(s: str, p: int) -> str :
-    if p > 6 or p < 1 :
-        return None
-    
-    p -= 1
-    ps = [
-        f'{"":-^1s} ',  f'{"":-^3s} ', f'{"":-^5s} ', f'{"":-^7s} ', f'{"":-^9s} ', f'{"":-^11s} '
-    ]
-    return ps[p] + s
+def logging(log:str, level:int = 0) -> str :
+    if level != 0 :
+        level -= 1
 
-def logging(log:str) -> str :
-    
+        pre_string = [
+            f'{"":-^1s} ',  f'{"":-^3s} ', f'{"":-^5s} ', f'{"":-^7s} ', f'{"":-^9s} ', f'{"":-^11s} '
+        ]
+
+        try :
+            log = pre_string[level] + str(log)
+        except :
+            raise Exception(f'{"Level ERROR":*^30s}')
+
     print(log)
-
     return log + '\n'
 
-def output_log(log) -> None :
+
+def output_log(log:str, mode:int = 0) :
+    #### mode = 0 --> To write the all log to file now
+    #### mode = 1 --> Return IO to add log any time 
     t = time.strftime('%Y%m%d_%H%M%S', time.localtime(time.time()))
 
-    with open(f'log_{t}.txt','w') as f :
+    if mode == 0 :   
+        with open(f'log_{t}.txt','w') as f :
+            f.write(log)
+
+    elif mode == 1 :
+        f = open(f'log_{t}.txt','a')
         f.write(log)
+        return f
 
 
 def sub_trial(trial) -> str:
@@ -38,10 +47,20 @@ def sub_trial(trial) -> str:
     return sub_trial
 
 if __name__ == '__main__' :
-    print(output_str('It\'s OK!!!', 1))
+    ####################################
+    #### TEST ZONE
+    ### logging with level
+    ### output_log & mode = 0 (default)
+    # log = ''
 
-    log = ''
+    # log += logging('123', level = 7)
+    # log += logging(456, level = 2)
+    # # output_log(log)
 
-    log += logging('123')
-    log += logging('345')
-    output_log(log)
+    # print(log)
+
+    ####################################
+    #### TEST ZONE
+    ### output_log & mode = 1
+    # f = output_log("123", mode = 1)
+    # f.write('1111')

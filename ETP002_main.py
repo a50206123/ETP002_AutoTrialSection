@@ -1,5 +1,7 @@
 from yc_etabs_api.yc_etabs_api import ETABS
 import ETP001_main as ETP001
+import yc_format as ycf
+
 
 class AutoTrialSection :
     def __init__(self,
@@ -11,6 +13,12 @@ class AutoTrialSection :
         
         self.current_check = False
         self.max_trial = 1
+        self.sub_trial = ycf.sub_trial
+
+        self.log = ''
+        self.output_str = ycf.output_str
+        self.logging = ycf.logging
+        self.output_log = ycf.output_log
 
         self.excel_filename = excel_filename
 
@@ -23,7 +31,7 @@ class AutoTrialSection :
     def anylzing(self) -> None :
         pass
 
-    def adjust_spec_amplication(static_eq:list[float] = [1, 1]) -> float :
+    def adjust_spec_amplification(static_eq:list[float] = [1, 1]) -> float :
         pass
 
     def designing(self) -> None :
@@ -35,54 +43,42 @@ class AutoTrialSection :
     def check_criteria(self) -> bool :
         pass
 
-    def logging(self, log:str) -> None :
-        self.log += log + '\n'
-        print(log)
-
-    def output_log(self) -> None :
-        pass
-
     def auto_change_sect(self) :
         pass
 
     def doing (self) :
+        priority = 2
+
+        self.log += self.logging('Analyzing... ', priority)
         self.anylzing()
-        self.adjust_spec_amplication()
+
+        self.log += self.logging('Adjusting Spectral Amplification... ', priority)
+        self.adjust_spec_amplification()
+
+
         self.designing()
 
         self.current_check = self.check_criteria()
 
-    def sub_trial(trial) :
-        sub_trial = 'th'
-
-        if trial in [11, 12] :
-            pass
-        elif trial % 10 == 1 :
-            sub_trial = 'st'
-        elif trial % 10 == 2 :
-            sub_trial = 'nd'
-        elif trial % 10 == 3 :
-            sub_trial == 'rd'
-
-        return sub_trial
-
     def trying(self) :
-        for trial in range(self.max_trial) :
-            
-            print(f'{trial+1}{self.sub_trial(trial+1)}...')
+        priority = 1
 
+        for trial in range(self.max_trial) :
+            real_trial = trial + 1
+            
+            self.log += self.logging(f'{real_trial}{self.sub_trial(real_trial)}...', priority)
             self.doing
 
             if self.current_check :
-                self.logging(f'{"":-^3s} {trial+1}{self.sub_trial} trial is OK!!')
+                self.log += self.logging(f'{real_trial}{self.sub_trial(real_trial)} trial is OK!!', priority+1)
                 break
             else :
-                self.logging(f'{"":-^3s} {trial+1}{self.sub_trial} trial is NGGGGGGG!!')
+                self.log += self.logging(f'{real_trial}{self.sub_trial(real_trial)} trial is NGGGGGGG!!', priority+1)
 
-                if trial == self.max_trial-1 :
-                    self.logging(f'{"":-^5s} Trial is MAX trial! Please adjust parameters before do it again!!')
+                if real_trial == self.max_trial :
+                    self.log += self.logging('Trial is MAX trial! Please adjust parameters before do it again!!', priority+2)
                 else :
-                    self.logging(f'{"":-^5s} CHANGING sections')
+                    self.log += self.logging('CHANGING sections', priority+2)
                     self.auto_change_sect()
 
 
