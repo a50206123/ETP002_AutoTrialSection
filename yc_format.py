@@ -64,3 +64,6 @@ if __name__ == '__main__' :
     ### output_log & mode = 1
     # f = output_log("123", mode = 1)
     # f.write('1111')
+
+
+    pass
